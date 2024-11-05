@@ -1,0 +1,191 @@
+---
+title: "Workshop on Latent Growth Modeling in Lavaan"
+author: "Lifespan Cognitive Dynamics Lab"
+date: "November 2024"
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to this tutorial on Latent Growth Models (LGMs).
+
+Paragraph with simple explanation on LGMs here.
+
+Maybe a little lavaan notation cheat sheet here.
+
+And some information on the dataset.
+
+Now it's time to get started!
+
+## Content {.tabset .tabset-pills}
+
+### Getting started
+
+The first step on this LGM adventure is to make sure all necessary programs and packages are installed. If you do not have R and/or its user-friendly interface, RStudio, installed, please do so via [this website](https://posit.co/download/rstudio-desktop/).
+
+Then, within R, you need to install and load the lavaan package, which you are going to fit LGMs with.
+
+**Assignment 1: Install and load the lavaan package.**
+
+```{r class.source = "fold-show", getpackages, message=FALSE,warning=FALSE}
+if(!require("lavaan")){install.packages("lavaan",repos = "http://cran.us.r-project.org")}
+require(lavaan)
+```
+
+Now download the WISC data from the shared folder. Make sure that your R environment is linked to the folder in which you saved the data by setting your working directory.
+
+**Assignment 2: Load the WISC data into R and explore which data are in the data file.**
+
+```{r class.source = "fold-show", loaddata, message=FALSE,warning=FALSE,include=TRUE}
+wisc <- read.csv("C:/Users/jesscha/Downloads/wisc.csv")[,-1]
+head(wisc)
+```
+
+For now, we are only going to analyze data from the verbal subtest (indicated by a column name that starts with "V").
+
+**Assignment 3: Subset the data such that the dataset you work with only contains the id numbers and the scores on the verbal subtest across the four measurements. Your subset should thus contain five columns.**
+
+```{r class.source = "fold-show", subsetdata, message=FALSE,warning=FALSE}
+wisc_verbal <- wisc[,c("ID","V6","V7","V9","V11")]
+```
+
+As you may have noticed when exploring the data, they are in wide format, that is, they contain one row per participant and the different measurements are in separate columns. To fit models in Lavaan, this wide format is necessary. Yet, for plotting, it is easier if data are in long format, with one row per participant per measurement.
+
+**Assignment 4: Reshape the data subset from wide to long format.**
+
+```{r class.source = "fold-show", reshapedata, message=FALSE,warning=FALSE}
+if(!require(dplyr)){install.packages("dplyr")}
+if(!require(tidyr)){install.packages("tidyr")}
+require(dplyr,tidyr)
+
+wisc_verbal_long <- wisc_verbal %>% pivot_longer(!ID, names_to = "wave", values_to = "verbal")
+```
+Now that we have prepared the data we want to model, let's plot them!
+
+**Assignment 5: Plot the data with the four measurements on the x-axis, the score on the verbal subtest on the y-axis, and a line for each subject.**
+
+```{r class.source = "fold-show", plotdata, message=FALSE,warning=FALSE,include=T}
+if(!require(dplyr)){install.packages("ggplot2")}
+require(ggplot2)
+
+wisc_verbal_long$wave = factor(wisc_verbal_long$wave, levels=c("V6","V7","V9","V11"))
+
+ggplot(wisc_verbal_long,aes(wave,verbal,group=ID,fill=ID,color=ID)) +
+  geom_point() + 
+  geom_line() +
+  theme(legend.position = "none") +
+  labs(x = "Wave", y = "Score on Verbal Subtest")
+```
+
+To enable you to check whether your model implementation is correct in a later step, it is good to first formulate expectations based on the plotted data.
+
+**Assignment 6: Describe what you see. What is the average score at each of the four measurements?  Do subjects in- or decrease across measurements? Are there individual differences in these effects?**
+
+You're ready to move on to do some model fitting now. <a href="#top">Click here to go back to the top</a> to move on to the next module.
+
+### Basic LGM in Lavaan
+
+You are now going to actually fit an LGM in lavaan. We start simple.
+
+**Assignment 7: Start by creating an empty string that you call linear_growth_model. Then try to implement an LGM in which you estimate (1) intercepts for each of the four time points, and (2) a *linear* slope. See the slides and the cheat sheet at the top for examples and hints.**
+
+```{r class.source = "fold-show", createmodel, message=FALSE,warning=FALSE}
+# Create LGM
+linear_growth_model <- '
+  i =~ 1*V6 + 1*V7 + 1*V9 + 1*V11
+  s =~ 0*V6 + 1*V7 + 2*V9 + 3*V11'
+```
+
+**Assignment 8: Fit the model you created in assignment 7 to the verbal subset data using the growth() function and plot results using summary().**
+
+```{r class.source = "fold-show", outputres, message=FALSE,warning=FALSE,include=TRUE}
+# Fit LGM
+fit_linear_growth_model <- growth(linear_growth_model, data=wisc_verbal,missing='fiml')
+# Output results
+summary(fit_linear_growth_model, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+```
+
+**Assignment 9: How is model fit?**
+
+**Assignment 10: What is the average verbal score at baseline? How does this compare to the expectations you formulated in assignment 6?**
+
+**Assignment 11: What is the average change per wave?**
+
+**Assignment 12: Are there individual differences in the score at baseline? And in how much individuals change?**
+
+**Assignment 13: What does the score at baseline tell you about how much individuals change?**
+
+Great! You have interpreted your first LGM output. Let's make it a little more difficult in the <a href="#top">next module</a>.
+
+### Different Shapes of Growth
+
+In the previous module, we modeled a linear growth model. Yet, it is also possible to model non-linear growth in lavaan. To do so, you fix the loadings of the first and last measurement, but freely estimate the middle ones.
+
+**Assignment 14: Create a non-linear (basis) growth model, fit it to the verbal data, and output results.**
+
+```{r class.source = "fold-show", basisoutput, message=FALSE,warning=FALSE,include=TRUE}
+# Create non-linear growth model
+basis_growth_model <- 'i =~ 1*V6 + 1*V7 + 1*V9 + 1*V11
+                       s =~ 0*V6 + V7 + V9 + 1*V11'
+# Fit model
+fit_basis_growth_model <- growth(basis_growth_model, data=wisc_verbal,missing='fiml')
+# Output results
+summary(fit_basis_growth_model, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+```
+
+**Assignment 15: How is model fit?**
+
+**Assignment 16: What is the average verbal score at baseline? Does this estimate differ from the estimate in assignment 10? And from your expectations?**
+
+**Assignment 17: What is the shape of change across measurements?**
+
+**Assignment 18: Perform a statistical test to compare model fit. Does the linear or non-linear model fit better?**
+
+```{r class.source = "fold-show", comparefit, message=FALSE,warning=FALSE,include=TRUE}
+# Compare model fit
+anova(fit_basis_growth_model,fit_linear_growth_model)
+```
+
+Another question one may be interested in is what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model.
+
+**Assignment 19: Add educational level of the mother (moedu in the data file) as predictor of baseline scores and change in the non-linear model.**
+
+```{r class.source = "fold-show", addcov, message=FALSE,warning=FALSE,include=TRUE}
+# Specify model
+basis_growth_model_cov <- ' 
+  i =~ 1*V6 + 1*V7 + 1*V9 + 1*V11
+  s =~ 0*V6 + V7 + V9 + 1*V11 
+  s~moedu
+  i~moedu
+  i~~s'
+```
+
+**Assignment 20: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**
+
+```{r class.source = "fold-show", fitcov, message=FALSE,warning=FALSE,include=TRUE}
+# Fit model
+fit_basis_growth_model_cov <- growth(basis_growth_model_cov, data=wisc,missing='fiml')
+# Output results
+summary(fit_basis_growth_model_cov, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+```
+
+**Assignment 21: Perform the same steps as in assignments 19 and 20 but now for processing speed at baseline. Does processing speed relate to verbal baseline scores? And to change?**
+
+```{r class.source = "fold-show", fitcov2, message=FALSE,warning=FALSE,include=TRUE}
+# Specify model
+basis_growth_model_covP <- ' 
+  i =~ 1*V6 + 1*V7 + 1*V9 + 1*V11
+  s =~ 0*V6 + V7 + V9 + 1*V11 
+  s~P6
+  i~P6
+  i~~s
+'
+# Fit model
+fit_basis_growth_model_covP <- growth(basis_growth_model_covP, data=wisc,missing='fiml')
+# Output results
+summary(fit_basis_growth_model_covP, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+```
