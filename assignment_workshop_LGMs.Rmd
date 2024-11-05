@@ -32,8 +32,9 @@ Then, within R, you need to install and load the lavaan package, which you are g
 **Assignment 1: Install and load the lavaan package.**
 
 ```{r class.source = "fold-show", getpackages, message=FALSE,warning=FALSE}
-if(!require("lavaan")){install.packages("lavaan",repos = "http://cran.us.r-project.org")}
-require(lavaan)
+if(!require("pacman")){install.packages("pacman",repos = "http://cran.us.r-project.org")}
+
+pacman::p_load(lavaan, tidyverse, here)
 ```
 
 Now download the WISC data from the shared folder. Make sure that your R environment is linked to the folder in which you saved the data by setting your working directory.
@@ -41,7 +42,10 @@ Now download the WISC data from the shared folder. Make sure that your R environ
 **Assignment 2: Load the WISC data into R and explore which data are in the data file.**
 
 ```{r class.source = "fold-show", loaddata, message=FALSE,warning=FALSE,include=TRUE}
-wisc <- read.csv("C:/Users/jesscha/Downloads/wisc.csv")[,-1]
+path <- here::here()
+
+setwd(path)
+wisc <- read.csv("wisc.csv")[,-1]
 head(wisc)
 ```
 
@@ -58,26 +62,21 @@ As you may have noticed when exploring the data, they are in wide format, that i
 **Assignment 4: Reshape the data subset from wide to long format.**
 
 ```{r class.source = "fold-show", reshapedata, message=FALSE,warning=FALSE}
-if(!require(dplyr)){install.packages("dplyr")}
-if(!require(tidyr)){install.packages("tidyr")}
-require(dplyr,tidyr)
-
-wisc_verbal_long <- wisc_verbal %>% pivot_longer(!ID, names_to = "wave", values_to = "verbal")
+wisc_verbal_long <- wisc_verbal %>% 
+  pivot_longer(!ID, names_to = "wave", values_to = "verbal")
 ```
 Now that we have prepared the data we want to model, let's plot them!
 
 **Assignment 5: Plot the data with the four measurements on the x-axis, the score on the verbal subtest on the y-axis, and a line for each subject.**
 
 ```{r class.source = "fold-show", plotdata, message=FALSE,warning=FALSE,include=T}
-if(!require(dplyr)){install.packages("ggplot2")}
-require(ggplot2)
-
 wisc_verbal_long$wave = factor(wisc_verbal_long$wave, levels=c("V6","V7","V9","V11"))
 
-ggplot(wisc_verbal_long,aes(wave,verbal,group=ID,fill=ID,color=ID)) +
+ggplot(wisc_verbal_long, aes(wave, verbal, group=ID, fill=ID, color=ID)) +
   geom_point() + 
   geom_line() +
-  theme(legend.position = "none") +
+  theme_classic(base_size = 15) + # adding a classic theme; https://ggplot2.tidyverse.org/reference/ggtheme.html
+  theme(legend.position = "none") + # getting rid of legend
   labs(x = "Wave", y = "Score on Verbal Subtest")
 ```
 
