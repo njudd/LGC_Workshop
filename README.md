@@ -1,6 +1,5 @@
 # Latent Growth Curve Modeling Workshop
-[Lifespan Cognitive Dynamics Lab(!lifespancognitivedynamics.com/)
-2024-11-05
+[Lifespan Cognitive Dynamics Lab](!lifespancognitivedynamics.com/)
 
 
 ## Programme
