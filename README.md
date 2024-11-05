@@ -7,4 +7,4 @@
 
 1. Intro talk 13:00-13:20
 2. Hands on part 1 13:30 - 14:30
-3. Hands on part 1 14:45 - 16:00
+3. Hands on part 2 14:45 - 16:00
