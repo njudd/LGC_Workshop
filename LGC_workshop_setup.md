@@ -1,14 +1,14 @@
-# Quick setup R
+# Latent Growth Curve Workshop Setup
+
+[Lifespan Cognitive Dynamics Lab](!lifespancognitivedynamics) - Donders Instuite - 2024/11/19
 
 ### 0. (optional) Download a markdown editor
 
 - This allows you to edit our text in `.md` files & take notes. There are many, [marktext](!https://www.marktext.cc/) is a lightweight cross-platform option.
-  
-  
 
 ### 1. Make sure you have the latest R downloaded
 
-- Type `R.version$version.string` in R it should be **4.4.0** (aka 'Puppy Cup' with `R.version$nickname`)
+- Type `R.version$version.string` in R it should be **4.4.2** (aka 'Pile of Leaves' with `R.version$nickname`)
 - See the 'protip' at the bottom of this document if you want to keep the same packages you downloaded previously.
 - If not download the latest version for [Windows](https://cran.r-project.org/bin/windows/base/R-4.3.2-win.exe) or [Mac](https://cran.r-project.org/bin/macosx/)
 
@@ -24,14 +24,12 @@
 ```
 if (!require(pacman)) {install.packages("pacman")}
 
-pacman::p_load(patchwork, tidyverse, lavaan, ggpp, plyr, ggrain)
+pacman::p_load(lavaan, tidyverse, here, reshape2)
 ```
 
 ##### Protip: Save your current packages to make updating easier!
 
 ```
-if (!require(pacman)) {install.packages("pacman")}
-
 # do this before you update
 mypks <- pacman::p_lib() # a list of packages
 saveRDS(mypks, "~/mypks.rds") # saving them
