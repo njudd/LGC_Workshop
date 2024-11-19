@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Welcome to this tutorial on Latent Growth Models (LGMs).
 
-Paragraph with simple explanation on LGMs here.
+Paragraph with simple explanation on LGMs here
 
 Maybe a little lavaan notation cheat sheet here.
 
@@ -42,10 +42,10 @@ Now download the WISC data from the shared folder. Make sure that your R environ
 **Assignment 2: Load the WISC data into R and explore which data are in the data file.**
 
 ```{r class.source = "fold-show", loaddata, message=FALSE,warning=FALSE,include=TRUE}
-path <- here::here()
+path <- here::here() # this does not do what I wish it does
 
 setwd(path)
-wisc <- read.csv("wisc.csv")[,-1]
+wisc <- read.csv("~/projects/LGC_Workshop/wisc.csv")[,-1]
 head(wisc)
 ```
 
