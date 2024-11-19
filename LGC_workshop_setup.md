@@ -2,11 +2,9 @@
 
 ### 0. (optional) Download a markdown editor
 
-- There are many, [marktext](!https://www.marktext.cc/) is a lightweight cross-platform option.
-
-- This allows you to edit our text in `.md` files & take notes :) 
-
-
+- This allows you to edit our text in `.md` files & take notes. There are many, [marktext](!https://www.marktext.cc/) is a lightweight cross-platform option.
+  
+  
 
 ### 1. Make sure you have the latest R downloaded
 
