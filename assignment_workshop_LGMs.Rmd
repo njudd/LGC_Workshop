@@ -31,7 +31,7 @@ Then, within R, you need to install and load the lavaan package, which you are g
 
 **Assignment 1: Install and load the lavaan package.**
 
-```{r class.source = "fold-show", getpackages, message=FALSE,warning=FALSE}
+```{r warning=FALSE, class.source="fold-show", getpackages, message=FALSE}
 if(!require("pacman")){install.packages("pacman",repos = "http://cran.us.r-project.org")}
 
 pacman::p_load(lavaan, tidyverse, here)
@@ -63,7 +63,7 @@ As you may have noticed when exploring the data, they are in wide format, that i
 
 ```{r class.source = "fold-show", reshapedata, message=FALSE,warning=FALSE}
 wisc_verbal_long <- wisc_verbal %>% 
-  pivot_longer(!ID, names_to = "wave", values_to = "verbal")
+  pivot_longer(!ID, names_to = "wave", values_to = "verbal") #test
 ```
 Now that we have prepared the data we want to model, let's plot them!
 
