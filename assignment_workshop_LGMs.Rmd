@@ -46,7 +46,7 @@ Now download the WISC data from the shared folder. Make sure that your R environ
 path <- "C:/Users/leamic/Desktop/" #change to your folder
 
 setwd(path)
-wisc <- read.csv("~/LGC_Workshop/wisc.csv")[,-1]
+wisc <- read.csv("C:/Users/leamic/Desktop/LGC_Workshop/wisc.csv")[,-1]
 
 head(wisc)         #first 6 rows
 colnames(wisc)     #names of columns
