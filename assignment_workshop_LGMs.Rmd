@@ -8,7 +8,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE) # for the answer sheet
+
+# knitr::opts_chunk$set(echo = FALSE, eval = FALSE) # for the assignment
 ```
 
 Welcome to this tutorial on Latent Growth Models (LGMs).
@@ -30,9 +32,9 @@ The first step on this LGM adventure is to make sure all necessary programs and 
 
 Then, within R, you need to install and load the lavaan package, which you are going to fit LGMs with.
 
-**Assignment 1: Install and load the lavaan package.**
+<font size="4">**Assignment 1: Install and load the lavaan package.**</font>
 
-```{r warning=FALSE, class.source="fold-show", getpackages, message=FALSE}
+```{r class.source = "fold-show", getpackages, message=FALSE,warning=FALSE, echo=TRUE}
 if(!require("pacman")){install.packages("pacman",repos = "http://cran.us.r-project.org")}
 
 pacman::p_load(lavaan, tidyverse, here, reshape2)
@@ -40,13 +42,13 @@ pacman::p_load(lavaan, tidyverse, here, reshape2)
 
 Now download the WISC data from the shared folder. Make sure that your R environment is linked to the folder in which you saved the data by setting your working directory.
 
-**Assignment 2: Load the WISC data into R and explore which data are in the data file.**
+<font size="4">**Assignment 2: Load the WISC data into R and explore which data are in the data file.**</font>
 
-```{r class.source = "fold-show", loaddata, message=FALSE,warning=FALSE,include=TRUE}
-path <- "C:/Users/leamic/Desktop/" #change to your folder
+```{r class.source = "fold-show", loaddata, message=FALSE,warning=FALSE,include=TRUE, echo = TRUE}
+path <- "/Users/njudd/projects/LGC_Workshop/" #change to the LGC_Workshop folder
 
 setwd(path)
-wisc <- read.csv("C:/Users/leamic/Desktop/LGC_Workshop/wisc.csv")[,-1]
+wisc <- read.csv(paste0(path,"wisc.csv"))[,-1]
 
 head(wisc)         #first 6 rows
 colnames(wisc)     #names of columns
@@ -57,7 +59,7 @@ sapply(wisc,class) #number of each column
 
 For now, we are only going to analyze data from the verbal subtest (indicated by a column name that starts with "Verbal").
 
-**Assignment 3: Subset the data such that the dataset you work with only contains the id numbers and the scores on the verbal subtest across the four measurements. Your subset should thus contain five columns.**
+<font size="4">**Assignment 3: Subset the data such that the dataset you work with only contains the id numbers and the scores on the verbal subtest across the four measurements. Your subset should thus contain five columns.**</font>
 
 ```{r class.source = "fold-show", subsetdata, message=FALSE,warning=FALSE}
 wisc_verbal <- wisc[,c("ID","Verbal_T6","Verbal_T7","Verbal_T9","Verbal_T11")]
@@ -65,7 +67,7 @@ wisc_verbal <- wisc[,c("ID","Verbal_T6","Verbal_T7","Verbal_T9","Verbal_T11")]
 
 As you may have noticed when exploring the data, they are in wide format, that is, they contain one row per participant and the different measurements are in separate columns. To fit models in Lavaan, this wide format is necessary. Yet, for plotting, it is easier if data are in long format, with one row per participant per measurement.
 
-**Assignment 4: Reshape the data subset from wide to long format.**
+<font size="4">**Assignment 4: Reshape the data subset from wide to long format.**</font>
 
 ```{r class.source = "fold-show", reshapedata, message=FALSE,warning=FALSE}
 wisc_verbal_long <- wisc_verbal %>% 
@@ -73,7 +75,7 @@ wisc_verbal_long <- wisc_verbal %>%
 ```
 Now that we have prepared the data we want to model, let's plot them!
 
-**Assignment 5: Plot the data with the four measurements on the x-axis, the score on the verbal subtest on the y-axis, and a line for each subject.**
+<font size="4">**Assignment 5: Plot the data with the four measurements on the x-axis, the score on the verbal subtest on the y-axis, and a line for each subject.**</font>
 
 ```{r class.source = "fold-show", plotdata, message=FALSE,warning=FALSE,include=T}
 wisc_verbal_long$wave = factor(wisc_verbal_long$wave, levels=c("Verbal_T6","Verbal_T7","Verbal_T9","Verbal_T11"))
@@ -88,7 +90,7 @@ ggplot(wisc_verbal_long, aes(wave, verbal, group=ID, fill=ID, color=ID)) +
 
 To enable you to check whether your model implementation is correct in a later step, it is good to first formulate expectations based on the plotted data.
 
-**Assignment 6: Describe what you see. What is the average score at each of the four measurements?  Do subjects in- or decrease across measurements? Are there individual differences in these effects?**
+<font size="4">**Assignment 6: Describe what you see. What is the average score at each of the four measurements?  Do subjects in- or decrease across measurements? Are there individual differences in these effects?**</font>
 
 You're ready to move on to do some model fitting now. <a href="#top">Click here to go back to the top</a> to move on to the next module.
 
@@ -100,7 +102,7 @@ You're ready to move on to do some model fitting now. <a href="#top">Click here 
 
 You are now going to actually fit an LGM in lavaan. We start simple.
 
-**Assignment 7: Start by creating an empty string that you call linear_growth_model. Then try to implement an LGM in which you estimate (1) intercepts for each of the four time points, and (2) a *linear* slope. See the slides and the cheat sheet at the top for examples and hints.**
+<font size="4">**Assignment 7: Start by creating an empty string that you call linear_growth_model. Then try to implement an LGM in which you estimate (1) intercepts for each of the four time points, and (2) a *linear* slope. See the slides and the cheat sheet at the top for examples and hints.**</font>
 
 ```{r class.source = "fold-show", createmodel, message=FALSE,warning=FALSE}
 # Create LGM
@@ -110,7 +112,10 @@ linear_growth_model <- '
 
 ```
 
-**Assignment 8: Fit the model you created in assignment 7 to the verbal subset data using the growth() function and plot results using summary().**
+<font size="4">**Assignment 8: Fit the model you created in assignment 7 to the verbal subset data using the growth() function and plot results using summary().**</font>
+
+The lavaan::growth function is a wrapper function (for lavaan::lavaan) that simplifies the specification of growth models. See details in the help file: `?lavaan::growth`, for more info see `?lavaan::lavOptions`.
+
 
 ```{r class.source = "fold-show", outputres, message=FALSE,warning=FALSE,include=TRUE}
 # Fit LGM
@@ -119,15 +124,15 @@ fit_linear_growth_model <- growth(linear_growth_model, data=wisc_verbal,missing=
 summary(fit_linear_growth_model, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
 ```
 
-**Assignment 9: How is model fit?**
+<font size="4">**Assignment 9: How is model fit?**</font>
 
-**Assignment 10: What is the average verbal score at baseline? How does this compare to the expectations you formulated in assignment 6?**
+<font size="4">**Assignment 10: What is the average verbal score at baseline? How does this compare to the expectations you formulated in assignment 6?**</font>
 
-**Assignment 11: What is the average change per wave?**
+<font size="4">**Assignment 11: What is the average change per wave?**</font>
 
-**Assignment 12: Are there individual differences in the score at baseline? And in how much individuals change?**
+<font size="4">**Assignment 12: Are there individual differences in the score at baseline? And in how much individuals change?**</font>
 
-**Assignment 13: What does the score at baseline tell you about how much individuals change?**
+<font size="4">**Assignment 13: What does the score at baseline tell you about how much individuals change?**</font>
 
 Great! You have interpreted your first LGM output. Let's make it a little more difficult in the <a href="#top">next module</a>.
 
@@ -138,7 +143,7 @@ Great! You have interpreted your first LGM output. Let's make it a little more d
 
 In the previous module, we modeled a linear growth model. Yet, it is also possible to model non-linear growth in lavaan like a quadratic trajectory. For this you need to add a third parameter called a quadratic term that will get the same loadings as for the slope but squared. 
 
-**Assignment 14: Create a quadratic growth model, fit it to the verbal data, and output results.**
+<font size="4">**Assignment 14: Create a quadratic growth model, fit it to the verbal data, and output results.**</font>
 
 ```{r class.source = "fold-show", quadmodel, message=FALSE,warning=FALSE,include=TRUE}
 
@@ -154,18 +159,18 @@ summary(fit_quad_growth_model, fit.measures = TRUE, rsquare = TRUE, standardized
 
 ```
 
-**Assignment 15: How is model fit?**
+<font size="4">**Assignment 15: How is model fit?**</font>
 
-**Assignment 16: What is the average verbal score at baseline? Does this estimate differ from the estimate in assignment 10? And from your expectations?**
+<font size="4">**Assignment 16: What is the average verbal score at baseline? Does this estimate differ from the estimate in assignment 10? And from your expectations?**</font>
 
-**Assignment 17: What is the shape of change across measurements?**
+<font size="4">**Assignment 17: What is the shape of change across measurements?**</font>
 
-**Assignment 18: You have an error message. What does it mean? Can you see where is the issue in the output?**
+<font size="4">**Assignment 18: You have an error message. What does it mean? Can you see where is the issue in the output?**</font>
 
 
 It is also possible to model non-linear growth in lavaan with no hypothesis on the shape. To do so, you fix the loadings of the first and last measurement, but freely estimate the middle ones.
 
-**Assignment 19: Create a non-linear (basis) growth model, fit it to the verbal data, and output results. Then compare the model fit with the previous models.**
+<font size="4">**Assignment 19: Create a non-linear (basis) growth model, fit it to the verbal data, and output results. Then compare the model fit with the previous models.**</font>
 
 ```{r class.source = "fold-show", basisoutput, message=FALSE,warning=FALSE,include=TRUE}
 # Create non-linear growth model
@@ -178,7 +183,7 @@ summary(fit_basis_growth_model, fit.measures = TRUE, rsquare = TRUE, standardize
 
 ```
 
-**Assignment 20: Perform a statistical test to compare model fit. Does the linear or non-linear model fit better?**
+<font size="4">**Assignment 20: Perform a statistical test to compare model fit. Does the linear or non-linear model fit better?**</font>
 
 ```{r class.source = "fold-show", comparefit2, message=FALSE,warning=FALSE,include=TRUE}
 # Compare model fit
@@ -193,7 +198,7 @@ Congrats! You can now choose the best shape for your trajectory. Let's add predi
 
 One may be interested in what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model.One hypothesis could be that the level of education of the mother predicts the development of verbal comprehension. 
 
-**Assignment 21: Add educational level of the mother (mo_edu in the data file) as predictor of baseline scores and change in the non-linear model.**
+<font size="4">**Assignment 21: Add educational level of the mother (mo_edu in the data file) as predictor of baseline scores and change in the non-linear model.**</font>
 
 ```{r class.source = "fold-show", addcov, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -205,7 +210,7 @@ basis_growth_model_cov <- '
   i~~s'
 ```
 
-**Assignment 22: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**
+<font size="4">**Assignment 22: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**</font>
 
 ```{r class.source = "fold-show", fitcov, message=FALSE,warning=FALSE,include=TRUE}
 # Fit model
@@ -214,7 +219,7 @@ fit_basis_growth_model_cov <- growth(basis_growth_model_cov, data=wisc,missing='
 summary(fit_basis_growth_model_cov, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
 ```
 
-**Assignment 23: Add processing speed at 11 as an outcome of changes in verbal comprehension. In other words, test if the slopes of verbal change predict the level of processing speed at 11.**
+<font size="4">**Assignment 23: Add processing speed at 11 as an outcome of changes in verbal comprehension. In other words, test if the slopes of verbal change predict the level of processing speed at 11.**</font>
 
 ```{r class.source = "fold-show", addout, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -232,7 +237,7 @@ summary(fit_basis_growth_model_covO, fit.measures = TRUE, rsquare = TRUE, standa
 ```
 
 
-**Assignment 24: Perform the same steps as in assignments 20 and 21 but now for processing speed at baseline. Does processing speed relate to verbal baseline scores? And to change?**
+<font size="4">**Assignment 24: Perform the same steps as in assignments 20 and 21 but now for processing speed at baseline. Does processing speed relate to verbal baseline scores? And to change?**</font>
 
 ```{r class.source = "fold-show", fitcov2, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -256,7 +261,7 @@ Time-invariant predictors are predictors of the individual differences in interc
 For instance, in the previous assignments, level of education of the mother and processing speed at 6 are time-invariant predictors. 
 Time-varying predictors are predictors of the outcome at each time point. In our example for instance we would need measurements at T6, T7, T9 and T11 
 
-**Assignment 25: Use processing speed as a time-varying predictors of the verbal measurement at each time points. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**
+<font size="4">**Assignment 25: Use processing speed as a time-varying predictors of the verbal measurement at each time points. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**</font>
 
 ```{r class.source = "fold-show", timevar, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -282,7 +287,7 @@ You're ready to add a bit more complexity to those models. <a href="#top">Click 
 
 Sometimes data collection does not happen every year, the intervals between two measures might be uneven. In the wisc data it seems that they measured the children at 6, 7, 9 and 11 years old. 
 
-**Assignment 26: Perform the same steps as in assignments 7, 8 and 14 but take into account the uneven time intervals in your loadings. Compare the three fit of the three models. do you have the same result as in the previous assignments?**
+<font size="4">**Assignment 26: Perform the same steps as in assignments 7, 8 and 14 but take into account the uneven time intervals in your loadings. Compare the three fit of the three models. do you have the same result as in the previous assignments?**</font>
 
 ```{r class.source = "fold-show", unevenint, message=FALSE,warning=FALSE,include=TRUE}
 # Specify linear model
@@ -327,7 +332,7 @@ A recommendation is that, if time intervals are unequal, it may be better to use
 
 Now that you know how to estimate the trajectory of one variable you are able to estimate the trajectory of two variables and see how they interact. 
 
-**Assignment 27: Create two non-linear (basis) growth models, one for verbal and one for processing speed. Correlate the changes of the two metrics. Are their slopes correlated? **
+<font size="4">**Assignment 27: Create two non-linear (basis) growth models, one for verbal and one for processing speed. Correlate the changes of the two metrics. Are their slopes correlated?**</font>
 
 ```{r class.source = "fold-show", twotraj, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -345,7 +350,7 @@ summary(fit_basis_growth_model_cor_ver_pro, fit.measures = TRUE, rsquare = TRUE,
 
 ```
 
-**Assignment 28: Within that model, explore how baseline level of one metric predict the changes in the other. How do the predict each other? **
+<font size="4">**Assignment 28: Within that model, explore how baseline level of one metric predict the changes in the other. How do the predict each other?**</font>
 
 ```{r class.source = "fold-show", twotraj2, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -368,11 +373,74 @@ Let's finish with simulation of data. <a href="#top">Click here to go back to th
 
 
 
+### LEAP data [extra]
+
+Here we will fit a LGM to synthetic LEAP data! 
+
+<font size="4">**Assignment 29: Load LEAP data & try to make a longitudinal raincloud plot for ssp with ggrain**</font>
+
+HINT: You might need the melt function from the package reshape2! [Here](https://www.njudd.com/raincloud-ggrain/) is a link to the ggrain documentation.
+
+```{r class.source = "fold-show", leapPlt, message=FALSE,warning=FALSE,include=TRUE}
+
+
+pacman::p_load(reshape2, ggrain)
+
+leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv"))
+
+# I thought this was a subject ID... it clearly is not
+leap_synthdata[leap_synthdata$subjects == 949903300427,]
+
+
+# now we make the data frame long with melt on ssp
+leap_synthdata_long <- melt(leap_synthdata, id.vars = "subjects", measure.vars = colnames(leap_synthdata)[str_detect(colnames(leap_synthdata), "ssp")])
+
+# plotting the data
+# ggplot(leap_synthdata_long, aes(variable, value, group = subjects, color = subjects)) +
+#   geom_point() +
+#   geom_line() +
+#   theme_classic(base_size = 15) +
+#   theme(legend.position = "none") +
+#   labs(x = "Wave", y = "Score on ssp")
+
+# now lets make raincloud plots
+# 
+# leap_synthdata_long$subjects <- as.character(leap_synthdata_long$subjects)
+# leap_2x <- leap_synthdata_long[leap_synthdata_long$variable != "t3_ssp_total",]
+
+ggplot(leap_synthdata_long[leap_synthdata_long$variable != "t3_ssp_total",], aes(x = variable, y = value, fill = variable)) +
+  geom_rain(id.long.var = "subjects", rain.side = "f1x1") +
+  theme_classic(base_size = 15) +
+  labs(x = "Wave", y = "Score on ssp")
+
+
+```
+
+<font size="4">**Assignment 30: Make a LGC model with ssp**</font>
+
+```{r class.source = "fold-show", leap_lgc, message=FALSE,warning=FALSE,include=TRUE}
+
+fit_lgm_ssp<- '
+i_ssp =~ 1*t1_ssp_total + 1*t2_ssp_total + 1*t3_ssp_total
+s_ssp =~ 0*t1_ssp_total + 1*t2_ssp_total + 2*t3_ssp_total
+t1_ssp_total~~ervar1*t1_ssp_total
+t2_ssp_total~~ervar2*t2_ssp_total
+t3_ssp_total~~ervar3*t3_ssp_total
+'
+fit_fit_lgm_ssp <- growth(fit_lgm_ssp, data=leap_synthdata,missing='fiml',estimator='mlr')
+# Output results
+summary(fit_fit_lgm_ssp, fit.measures=TRUE, standardized=TRUE, rsquare=TRUE,ci=T)
+
+```
+
+<font size="4">**Assignment 31: Choose a exogenous variable and see how it impacts the change of ssp!**</font>
+
+
 ### Simulate your data [extra]
 
 Data simulation is an useful tool to test your models and do power analysis, 
 
-**Assignment 29: Simulate a linear growth model with 4 waves. The intercepts should have a mean of 100 and a variance of 15. The slope should have a mean of 5 and a variance of 10. The intercept-slope covariance should have a mean of 3.**
+<font size="4">**Assignment 32: Simulate a linear growth model with 4 waves. The intercepts should have a mean of 100 and a variance of 15. The slope should have a mean of 5 and a variance of 10. The intercept-slope covariance should have a mean of 3.**</font>
 
 ```{r class.source = "fold-show", simdat, message=FALSE,warning=FALSE,include=TRUE}
 # Specify linear model
@@ -427,7 +495,7 @@ parTable(fit_fit_lgm_4waves)   #Parameters are recovered nicely
 
 You might want to simulate different means for the intercepts and slopes of different groups (e.g., female and male). You can simulate those groups at the same time by using a list: c().
 
-**Assignment 30: Simulate a linear growth model with three groups.**
+<font size="4">**Assignment 33: Simulate a linear growth model with three groups.**</font>
 
 ```{r class.source = "fold-show", simdatgroups, message=FALSE,warning=FALSE,include=TRUE}
 # Specify linear model
@@ -481,7 +549,7 @@ ggplot(plotdat, aes(variable,value,group=id)) +
 
 Simulating data can also be used for power analysis to test what effect size would be detected with your sample size and your model. 
 
-**Assignment 31: Use the previous simulate data model to test the effect size of a predictor on the slope. **
+<font size="4">**Assignment 34: Use the previous simulate data model to test the effect size of a predictor on the slope.**</font>
 
 ```{r class.source = "fold-show", poweranalysis, message=FALSE,warning=FALSE,include=TRUE}
 
@@ -580,5 +648,8 @@ ggplot(power_effectsize,aes(effect_size,powerLRT))+
   geom_point()
 
 ```
+
+
+
 
 
