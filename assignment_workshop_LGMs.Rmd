@@ -16,7 +16,9 @@ knitr::opts_chunk$set(echo = TRUE) # for the answer sheet
 Welcome to this tutorial on Latent Growth Models (LGMs).
 
 Latent Growth Models are structural equation models (SEM) that incorporate repeated observed measures of one variable to estimate the unobserved growth trajectory of that variable. 
-Latent variables are unobserved variables. The parameter of the unobserved trajectories such as intercept and slope are called latent variables.
+Latent variables are unobserved variables. The parameters of the unobserved trajectories such as intercept and slope are called latent variables.
+
+<!-- Maybe the last sentence would be more clear if it was phrased like "In latent growth models the growth trajectories are represented by the intercept and slope parameters, which are considered latent variables" (depends on how familiar with LGM they already are, but it confused me in the beginning)-->
 
 Lavaan notation cheat sheet: https://osf.io/q2prk
 
@@ -41,6 +43,7 @@ pacman::p_load(lavaan, tidyverse, here, reshape2)
 ```
 
 Now download the WISC data from the shared folder. Make sure that your R environment is linked to the folder in which you saved the data by setting your working directory.
+
 
 <font size="4">**Assignment 2: Load the WISC data into R and explore which data are in the data file.**</font>
 
@@ -142,6 +145,7 @@ Great! You have interpreted your first LGM output. Let's make it a little more d
 ### Different Shapes of Growth
 
 In the previous module, we modeled a linear growth model. Yet, it is also possible to model non-linear growth in lavaan like a quadratic trajectory. For this you need to add a third parameter called a quadratic term that will get the same loadings as for the slope but squared. 
+To do this, you need to specify one more latent variable in your model called quadratic term. The quadratic term is given loadings that are the squares of the loadings for the slope.
 
 <font size="4">**Assignment 14: Create a quadratic growth model, fit it to the verbal data, and output results.**</font>
 
@@ -196,7 +200,7 @@ Congrats! You can now choose the best shape for your trajectory. Let's add predi
 
 ### Predictors and outcomes
 
-One may be interested in what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model.One hypothesis could be that the level of education of the mother predicts the development of verbal comprehension. 
+One may be interested in what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model. One hypothesis could be that the level of education of the mother predicts the development of verbal comprehension. 
 
 <font size="4">**Assignment 21: Add educational level of the mother (mo_edu in the data file) as predictor of baseline scores and change in the non-linear model.**</font>
 
@@ -207,7 +211,7 @@ basis_growth_model_cov <- '
   s =~ 0*Verbal_T6 + Verbal_T7 + Verbal_T9 + 1*Verbal_T11 
   s~mo_edu
   i~mo_edu
-  i~~s'
+  '
 ```
 
 <font size="4">**Assignment 22: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**</font>
@@ -228,7 +232,6 @@ basis_growth_model_covO <- '
   s =~ 0*Verbal_T6 + Verbal_T7 + Verbal_T9 + 1*Verbal_T11 
   Pspeed_T11~s
   Pspeed_T11~1
-  i~~s
 '
 # Fit model
 fit_basis_growth_model_covO <- growth(basis_growth_model_covO, data=wisc,missing='fiml')
@@ -261,7 +264,7 @@ Time-invariant predictors are predictors of the individual differences in interc
 For instance, in the previous assignments, level of education of the mother and processing speed at 6 are time-invariant predictors. 
 Time-varying predictors are predictors of the outcome at each time point. In our example for instance we would need measurements at T6, T7, T9 and T11 
 
-<font size="4">**Assignment 25: Use processing speed as a time-varying predictors of the verbal measurement at each time points. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**</font>
+<font size="4">**Assignment 25: Use processing speed as a time-varying predictor of the verbal measurement at each time point. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**</font>
 
 ```{r class.source = "fold-show", timevar, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -287,7 +290,7 @@ You're ready to add a bit more complexity to those models. <a href="#top">Click 
 
 Sometimes data collection does not happen every year, the intervals between two measures might be uneven. In the wisc data it seems that they measured the children at 6, 7, 9 and 11 years old. 
 
-<font size="4">**Assignment 26: Perform the same steps as in assignments 7, 8 and 14 but take into account the uneven time intervals in your loadings. Compare the three fit of the three models. do you have the same result as in the previous assignments?**</font>
+<font size="4">**Assignment 26: Perform the same steps as in assignments 7, 8 and 14 but take into account the uneven time intervals in your loadings. Compare the three fits of the three models. Do you have the same result as in the previous assignments?**</font>
 
 ```{r class.source = "fold-show", unevenint, message=FALSE,warning=FALSE,include=TRUE}
 # Specify linear model
@@ -311,7 +314,7 @@ summary(fit_quad_growth_model_uneven, fit.measures = TRUE, rsquare = TRUE, stand
 
 #You should get the warning message "In lav_object_post_check(object) : lavaan WARNING: some estimated lv variances are negative" 
 
-# Compare linear model fit between the model not taking into account the uneven intervals and the one twking into account the uneven intervals
+# Compare linear model fit between the model not taking into account the uneven intervals and the one taking into account the uneven intervals
 anova(fit_linear_growth_model_uneven,fit_linear_growth_model)
 #You cannot compare these models
 
@@ -350,7 +353,7 @@ summary(fit_basis_growth_model_cor_ver_pro, fit.measures = TRUE, rsquare = TRUE,
 
 ```
 
-<font size="4">**Assignment 28: Within that model, explore how baseline level of one metric predict the changes in the other. How do the predict each other?**</font>
+<font size="4">**Assignment 28: Within that model, explore how one metrics baseline level predicts the changes in the other. How do they predict each other?**</font>
 
 ```{r class.source = "fold-show", twotraj2, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -438,7 +441,7 @@ summary(fit_fit_lgm_ssp, fit.measures=TRUE, standardized=TRUE, rsquare=TRUE,ci=T
 
 ### Simulate your data [extra]
 
-Data simulation is an useful tool to test your models and do power analysis, 
+Data simulation is a useful tool to test your models and do power analysis, 
 
 <font size="4">**Assignment 32: Simulate a linear growth model with 4 waves. The intercepts should have a mean of 100 and a variance of 15. The slope should have a mean of 5 and a variance of 10. The intercept-slope covariance should have a mean of 3.**</font>
 
