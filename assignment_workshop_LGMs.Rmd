@@ -196,7 +196,7 @@ Congrats! You can now choose the best shape for your trajectory. Let's add predi
 
 ### Predictors and outcomes
 
-One may be interested in what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model.One hypothesis could be that the level of education of the mother predicts the development of verbal comprehension. 
+One may be interested in what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model. One hypothesis could be that the level of education of the mother predicts the development of verbal comprehension. 
 
 **Assignment 21: Add educational level of the mother (mo_edu in the data file) as predictor of baseline scores and change in the non-linear model.**
 
@@ -207,7 +207,7 @@ basis_growth_model_cov <- '
   s =~ 0*Verbal_T6 + Verbal_T7 + Verbal_T9 + 1*Verbal_T11 
   s~mo_edu
   i~mo_edu
-  i~~s'
+  '
 ```
 
 **Assignment 22: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**
@@ -228,7 +228,6 @@ basis_growth_model_covO <- '
   s =~ 0*Verbal_T6 + Verbal_T7 + Verbal_T9 + 1*Verbal_T11 
   Pspeed_T11~s
   Pspeed_T11~1
-  i~~s
 '
 # Fit model
 fit_basis_growth_model_covO <- growth(basis_growth_model_covO, data=wisc,missing='fiml')
