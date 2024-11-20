@@ -378,13 +378,11 @@ Let's finish with simulation of data. <a href="#top">Click here to go back to th
 
 Here we will fit a LGM to synthetic LEAP data! 
 
-<font size="4">**Assignment 29: Load LEAP data & try to make a longitudinal raincloud plot for ssp with ggrain**</font>
+<font size="4">**Assignment 29: Load LEAP data & try to make a plot**</font>
 
-HINT: You might need the melt function from the package reshape2! [Here](https://www.njudd.com/raincloud-ggrain/) is a link to the ggrain documentation.
+HINT: You might need the melt function from the package reshape2!
 
 ```{r class.source = "fold-show", leapPlt, message=FALSE,warning=FALSE,include=TRUE}
-
-
 pacman::p_load(reshape2, ggrain)
 
 leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv"))
@@ -392,32 +390,20 @@ leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv"))
 # I thought this was a subject ID... it clearly is not
 leap_synthdata[leap_synthdata$subjects == 949903300427,]
 
-
 # now we make the data frame long with melt on ssp
 leap_synthdata_long <- melt(leap_synthdata, id.vars = "subjects", measure.vars = colnames(leap_synthdata)[str_detect(colnames(leap_synthdata), "ssp")])
 
 # plotting the data
-# ggplot(leap_synthdata_long, aes(variable, value, group = subjects, color = subjects)) +
-#   geom_point() +
-#   geom_line() +
-#   theme_classic(base_size = 15) +
-#   theme(legend.position = "none") +
-#   labs(x = "Wave", y = "Score on ssp")
-
-# now lets make raincloud plots
-# 
-# leap_synthdata_long$subjects <- as.character(leap_synthdata_long$subjects)
-# leap_2x <- leap_synthdata_long[leap_synthdata_long$variable != "t3_ssp_total",]
-
-ggplot(leap_synthdata_long[leap_synthdata_long$variable != "t3_ssp_total",], aes(x = variable, y = value, fill = variable)) +
-  geom_rain(id.long.var = "subjects", rain.side = "f1x1") +
+ggplot(leap_synthdata_long, aes(variable, value, group = subjects, color = subjects)) +
+  geom_point() +
+  geom_line() +
   theme_classic(base_size = 15) +
+  theme(legend.position = "none") +
   labs(x = "Wave", y = "Score on ssp")
-
 
 ```
 
-<font size="4">**Assignment 30: Make a LGC model with ssp**</font>
+<font size="4">**Assignment 30: Make a latent growth curve model with ssp**</font>
 
 ```{r class.source = "fold-show", leap_lgc, message=FALSE,warning=FALSE,include=TRUE}
 
