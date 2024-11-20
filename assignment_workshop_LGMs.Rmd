@@ -245,7 +245,6 @@ basis_growth_model_covP <- '
   s =~ 0*Verbal_T6 + Verbal_T7 + Verbal_T9 + 1*Verbal_T11 
   s~Pspeed_T6
   i~Pspeed_T6
-  i~~s
 '
 # Fit model
 fit_basis_growth_model_covP <- growth(basis_growth_model_covP, data=wisc,missing='fiml')
@@ -259,6 +258,8 @@ summary(fit_basis_growth_model_covP, fit.measures = TRUE, rsquare = TRUE, standa
 Time-invariant predictors are predictors of the individual differences in intercepts and slopes.They are often measurement at baseline (e.g., family income) or person-specific characteristics where value is constant over time (e.g., biological sex, country of origin).
 For instance, in the previous assignments, level of education of the mother and processing speed at 6 are time-invariant predictors. 
 Time-varying predictors are predictors of the outcome at each time point. In our example for instance we would need measurements at T6, T7, T9 and T11 
+<!-- Time-varying predictors are variables that can change across different time points and are used to predict repeated measures/outcome variable at those corresponding time points. They explain within-person variation over time, as each predictor is linked to the outcome at a specific time point. In our example for instance, to have a time-varying predictor we would need measurements at T6, T7, T9 and T11 
+-->
 
 **Assignment 25: Use processing speed as a time-varying predictor of the verbal measurement at each time point. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**
 
