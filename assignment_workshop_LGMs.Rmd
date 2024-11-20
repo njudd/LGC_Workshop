@@ -185,11 +185,11 @@ Let's finish with simulation of data. <a href="#top">Click here to go back to th
 
 Here we will fit a LGM to synthetic LEAP data! 
 
-<font size="4">**Assignment 29: Load LEAP data & try to make a longitudinal raincloud plot for ssp with ggrain**</font>
+<font size="4">**Assignment 29: Load LEAP data & try to make a plot**</font>
 
-HINT: You might need the melt function from the package reshape2! [Here](https://www.njudd.com/raincloud-ggrain/) is a link to the ggrain documentation.
+HINT: You might need the melt function from the package reshape2!
 
-<font size="4">**Assignment 30: Make a LGC model with ssp**</font>
+<font size="4">**Assignment 30: Make a latent growth curve model with ssp**</font>
 
 <font size="4">**Assignment 31: Choose a exogenous variable and see how it impacts the change of ssp!**</font>
 
