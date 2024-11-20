@@ -16,9 +16,7 @@ knitr::opts_chunk$set(echo = TRUE) # for the answer sheet
 Welcome to this tutorial on Latent Growth Models (LGMs).
 
 Latent Growth Models are structural equation models (SEM) that incorporate repeated observed measures of one variable to estimate the unobserved growth trajectory of that variable. 
-Latent variables are unobserved variables. The parameters of the unobserved trajectories such as intercept and slope are called latent variables.
-
-<!-- Maybe the last sentence would be more clear if it was phrased like "In latent growth models the growth trajectories are represented by the intercept and slope parameters, which are considered latent variables" (depends on how familiar with LGM they already are, but it confused me in the beginning)-->
+Latent variables are unobserved variables. In latent growth models the growth trajectories are represented by the intercept and slope parameters, which are considered latent variables.
 
 Lavaan notation cheat sheet: https://osf.io/q2prk
 
