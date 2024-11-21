@@ -105,11 +105,24 @@ You're ready to move on to do some model fitting now. <a href="#top">Click here 
 You are now going to actually fit an LGM in lavaan. We start simple.
 
 <font size="4">**Assignment 7: Start by creating an empty string that you call linear_growth_model. Then try to implement an LGM in which you estimate (1) intercepts for each of the four time points, and (2) a *linear* slope. See the slides and the cheat sheet at the top for examples and hints.**</font>
+```{r class.source = "fold-show", createmodel, message=FALSE,warning=FALSE}
+# Create LGM
+linear_growth_model <- '
+  i =~ 1*Verbal_T6 + 1*Verbal_T7 + 1*Verbal_T9 + 1*Verbal_T11
+  s =~ 0*Verbal_T6 + 1*Verbal_T7 + 2*Verbal_T9 + 3*Verbal_T11'
 
+```
 
 <font size="4">**Assignment 8: Fit the model you created in assignment 7 to the verbal subset data using the growth() function and plot results using summary().**</font>
 
 The lavaan::growth function is a wrapper function (for lavaan::lavaan) that simplifies the specification of growth models. See details in the help file: `?lavaan::growth`, for more info see `?lavaan::lavOptions`.
+
+```{r class.source = "fold-show", outputres, message=FALSE,warning=FALSE,include=TRUE}
+# Fit LGM
+fit_linear_growth_model <- growth(linear_growth_model, data=wisc_verbal,missing='fiml')
+# Output results
+summary(fit_linear_growth_model, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+```
 
 
 <font size="4">**Assignment 9: How is model fit?**</font>
