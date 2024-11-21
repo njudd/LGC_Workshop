@@ -3,6 +3,8 @@
 
 [Click here](https://github.com/njudd/LGC_Workshop/archive/refs/heads/main.zip) to download everything.
 
+mixed effects vs growth [paper](https://link.springer.com/content/pdf/10.3758/s13428-017-0976-5.pdf)
+
 ## Programme
 
 1. Intro talk 13:00-13:20
