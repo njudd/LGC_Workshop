@@ -382,10 +382,11 @@ Here we will fit a LGM to synthetic LEAP data!
 
 HINT: You might need the melt function from the package reshape2!
 
-```{r class.source = "fold-show", leapPlt, message=FALSE,warning=FALSE,include=TRUE}
+```{r class.source = "fold-show", leapPlt, message=FALSE,warning=FALSE,include=TRUE, eval=F}
 pacman::p_load(reshape2, ggrain)
 
-leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv"))
+# commenting off so it will knit
+#leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv"))
 
 # I thought this was a subject ID... it clearly is not
 leap_synthdata[leap_synthdata$subjects == 949903300427,]
@@ -405,7 +406,7 @@ ggplot(leap_synthdata_long, aes(variable, value, group = subjects, color = subje
 
 <font size="4">**Assignment 30: Make a latent growth curve model with ssp**</font>
 
-```{r class.source = "fold-show", leap_lgc, message=FALSE,warning=FALSE,include=TRUE}
+```{r class.source = "fold-show", leap_lgc, message=FALSE,warning=FALSE,include=TRUE, eval=F}
 
 fit_lgm_ssp<- '
 i_ssp =~ 1*t1_ssp_total + 1*t2_ssp_total + 1*t3_ssp_total
