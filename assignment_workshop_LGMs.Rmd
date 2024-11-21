@@ -63,13 +63,32 @@ For now, we are only going to analyze data from the verbal subtest (indicated by
 
 <font size="4">**Assignment 3: Subset the data such that the dataset you work with only contains the id numbers and the scores on the verbal subtest across the four measurements. Your subset should thus contain five columns.**</font>
 
+```{r class.source = "fold-show", subsetdata, message=FALSE,warning=FALSE}
+wisc_verbal <- wisc[,c("ID","Verbal_T6","Verbal_T7","Verbal_T9","Verbal_T11")]
+```
+
 As you may have noticed when exploring the data, they are in wide format, that is, they contain one row per participant and the different measurements are in separate columns. To fit models in Lavaan, this wide format is necessary. Yet, for plotting, it is easier if data are in long format, with one row per participant per measurement.
 
 <font size="4">**Assignment 4: Reshape the data subset from wide to long format.**</font>
+```{r class.source = "fold-show", reshapedata, message=FALSE,warning=FALSE}
+wisc_verbal_long <- wisc_verbal %>% 
+  pivot_longer(!ID, names_to = "wave", values_to = "verbal") #test
+```
 
 Now that we have prepared the data we want to model, let's plot them!
 
 <font size="4">**Assignment 5: Plot the data with the four measurements on the x-axis, the score on the verbal subtest on the y-axis, and a line for each subject.**</font>
+
+```{r class.source = "fold-show", plotdata, message=FALSE,warning=FALSE,include=T}
+wisc_verbal_long$wave = factor(wisc_verbal_long$wave, levels=c("Verbal_T6","Verbal_T7","Verbal_T9","Verbal_T11"))
+
+ggplot(wisc_verbal_long, aes(wave, verbal, group=ID, fill=ID, color=ID)) +
+  geom_point() + 
+  geom_line() +
+  theme_classic(base_size = 15) + # adding a classic theme; https://ggplot2.tidyverse.org/reference/ggtheme.html
+  theme(legend.position = "none") + # getting rid of legend
+  labs(x = "Wave", y = "Score on Verbal Subtest")
+```
 
 To enable you to check whether your model implementation is correct in a later step, it is good to first formulate expectations based on the plotted data.
 
