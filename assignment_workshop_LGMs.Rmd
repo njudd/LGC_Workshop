@@ -1,7 +1,9 @@
 ---
 title: "Workshop on Latent Growth Modeling in Lavaan"
-author: "Lifespan Cognitive Dynamics Lab"
-date: "November 2024"
+subtitle: "Lifespan Cognitive Dynamics Lab"
+author: 
+  - name: "Nicholas Judd • Léa Michel • Jessica Schaaf • Magda Lazari • Rogier Kievit"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
     code_folding: hide
@@ -138,6 +140,26 @@ summary(fit_linear_growth_model, fit.measures = TRUE, rsquare = TRUE, standardiz
 Great! You have interpreted your first LGM output. Let's make it a little more difficult in the <a href="#top">next module</a>.
 
 
+### Uneven time intervals
+
+Sometimes data collection does not happen every year, the intervals between two measures might be uneven. In the wisc data it seems that they measured the children at 6, 7, 9 and 11 years old. 
+
+<font size="4">**Assignment 14: Perform the same steps as in assignments 7, 8 and 14 but take into account the uneven time intervals in your loadings. Compare the three fits of the three models. Do you have the same result as in the previous assignments?**</font>
+
+```{r class.source = "fold-show", unevenint, message=FALSE,warning=FALSE,include=TRUE}
+# Specify linear model
+linear_growth_model_uneven <- ' i =~ 1*Verbal_T6 + 1*Verbal_T7 + 1*Verbal_T9 + 1*Verbal_T11
+                                s =~ 6*Verbal_T6 + 7*Verbal_T7 + 9*Verbal_T9 + 11*Verbal_T11'
+
+# Fit LGM
+fit_linear_growth_model_uneven <- growth(linear_growth_model_uneven, data=wisc_verbal,missing='fiml')
+# Output results
+summary(fit_linear_growth_model_uneven, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+
+```
+
+A recommendation is that, if time intervals are unequal, it may be better to use measured time.
+
 
 
 ### Different Shapes of Growth
@@ -145,7 +167,7 @@ Great! You have interpreted your first LGM output. Let's make it a little more d
 In the previous module, we modeled a linear growth model. Yet, it is also possible to model non-linear growth in lavaan like a quadratic trajectory. For this you need to add a third parameter called a quadratic term that will get the same loadings as for the slope but squared. 
 To do this, you need to specify one more latent variable in your model called quadratic term. The quadratic term is given loadings that are the squares of the loadings for the slope.
 
-<font size="4">**Assignment 14: Create a quadratic growth model, fit it to the verbal data, and output results.**</font>
+<font size="4">**Assignment 15: Create a quadratic growth model, fit it to the verbal data, and output results.**</font>
 
 ```{r class.source = "fold-show", quadmodel, message=FALSE,warning=FALSE,include=TRUE}
 
@@ -161,18 +183,18 @@ summary(fit_quad_growth_model, fit.measures = TRUE, rsquare = TRUE, standardized
 
 ```
 
-<font size="4">**Assignment 15: How is model fit?**</font>
+<font size="4">**Assignment 16: How is model fit?**</font>
 
-<font size="4">**Assignment 16: What is the average verbal score at baseline? Does this estimate differ from the estimate in assignment 10? And from your expectations?**</font>
+<font size="4">**Assignment 17: What is the average verbal score at baseline? Does this estimate differ from the estimate in assignment 10? And from your expectations?**</font>
 
-<font size="4">**Assignment 17: What is the shape of change across measurements?**</font>
+<font size="4">**Assignment 18: What is the shape of change across measurements?**</font>
 
-<font size="4">**Assignment 18: You have an error message. What does it mean? Can you see where is the issue in the output?**</font>
+<font size="4">**Assignment 19: You have an error message. What does it mean? Can you see where is the issue in the output?**</font>
 
 
 It is also possible to model non-linear growth in lavaan with no hypothesis on the shape. To do so, you fix the loadings of the first and last measurement, but freely estimate the middle ones.
 
-<font size="4">**Assignment 19: Create a non-linear (basis) growth model, fit it to the verbal data, and output results. Then compare the model fit with the previous models.**</font>
+<font size="4">**Assignment 20: Create a non-linear (basis) growth model, fit it to the verbal data, and output results. Then compare the model fit with the previous models.**</font>
 
 ```{r class.source = "fold-show", basisoutput, message=FALSE,warning=FALSE,include=TRUE}
 # Create non-linear growth model
@@ -185,12 +207,37 @@ summary(fit_basis_growth_model, fit.measures = TRUE, rsquare = TRUE, standardize
 
 ```
 
-<font size="4">**Assignment 20: Perform a statistical test to compare model fit. Does the linear or non-linear model fit better?**</font>
+<font size="4">**Assignment 21: Perform a statistical test to compare model fit. Does the linear or non-linear model fit better?**</font>
 
 ```{r class.source = "fold-show", comparefit2, message=FALSE,warning=FALSE,include=TRUE}
 # Compare model fit
 anova(fit_basis_growth_model,fit_linear_growth_model)
 #Here it looks like the basis model fits better
+```
+
+
+<font size="4">**Assignment 22: Can you make a Quadratic with uneven time intervals and compare it to the linear?**</font>
+
+```{r class.source = "fold-show", uneven_quad, message=FALSE,warning=FALSE,include=TRUE}
+# Specify quadratic model
+quad_growth_model_uneven <- ' i =~ 1*Verbal_T6 + 1*Verbal_T7 + 1*Verbal_T9 + 1*Verbal_T11
+                                s =~ 6*Verbal_T6 + 7*Verbal_T7 + 9*Verbal_T9 + 11*Verbal_T11
+                                q =~ 36*Verbal_T6 + 49*Verbal_T7 + 81*Verbal_T9 + 121*Verbal_T11'
+
+# Fit LGM
+fit_quad_growth_model_uneven <- growth(quad_growth_model_uneven, data=wisc_verbal,missing='fiml')
+# Output results
+summary(fit_quad_growth_model_uneven, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
+
+#You should get the warning message "In lav_object_post_check(object) : lavaan WARNING: some estimated lv variances are negative" 
+
+# Compare linear model fit between the model not taking into account the uneven intervals and the one taking into account the uneven intervals
+anova(fit_linear_growth_model_uneven,fit_linear_growth_model)
+#You cannot compare these models
+
+# Compare model fit between linear trajectory with uneven intervals and the basis model
+anova(fit_linear_growth_model_uneven,fit_basis_growth_model)
+#Here it looks like the basis model is preferred. 
 ```
 
 Congrats! You can now choose the best shape for your trajectory. Let's add predictors in the <a href="#top">next module</a>.
@@ -200,7 +247,7 @@ Congrats! You can now choose the best shape for your trajectory. Let's add predi
 
 One may be interested in what predicts baseline scores and/or change. To assess this, one can add predictors in the growth model. One hypothesis could be that the level of education of the mother predicts the development of verbal comprehension. 
 
-<font size="4">**Assignment 21: Add educational level of the mother (mo_edu in the data file) as predictor of baseline scores and change in the non-linear model.**</font>
+<font size="4">**Assignment 23: Add educational level of the mother (mo_edu in the data file) as predictor of baseline scores and change in the non-linear model.**</font>
 
 ```{r class.source = "fold-show", addcov, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -212,7 +259,7 @@ basis_growth_model_cov <- '
   '
 ```
 
-<font size="4">**Assignment 22: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**</font>
+<font size="4">**Assignment 24: Fit the model from assignment 19 to the verbal data and output results. Does mother's education predict baseline scores? And what about change across measurements?**</font>
 
 ```{r class.source = "fold-show", fitcov, message=FALSE,warning=FALSE,include=TRUE}
 # Fit model
@@ -221,7 +268,7 @@ fit_basis_growth_model_cov <- growth(basis_growth_model_cov, data=wisc,missing='
 summary(fit_basis_growth_model_cov, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
 ```
 
-<font size="4">**Assignment 23: Add processing speed at 11 as an outcome of changes in verbal comprehension. In other words, test if the slopes of verbal change predict the level of processing speed at 11.**</font>
+<font size="4">**Assignment 25: Add processing speed at 11 as an outcome of changes in verbal comprehension. In other words, test if the slopes of verbal change predict the level of processing speed at 11.**</font>
 
 ```{r class.source = "fold-show", addout, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -238,7 +285,7 @@ summary(fit_basis_growth_model_covO, fit.measures = TRUE, rsquare = TRUE, standa
 ```
 
 
-<font size="4">**Assignment 24: Perform the same steps as in assignments 20 and 21 but now for processing speed at baseline. Does processing speed relate to verbal baseline scores? And to change?**</font>
+<font size="4">**Assignment 26: Perform the same steps as in assignments 20 and 21 but now for processing speed at baseline. Does processing speed relate to verbal baseline scores? And to change?**</font>
 
 ```{r class.source = "fold-show", fitcov2, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -262,7 +309,7 @@ Time-invariant predictors are predictors of the individual differences in interc
 For instance, in the previous assignments, level of education of the mother and processing speed at 6 are time-invariant predictors. 
 Time-varying predictors are predictors of the outcome at each time point. In our example for instance we would need measurements at T6, T7, T9 and T11 
 
-<font size="4">**Assignment 25: Use processing speed as a time-varying predictor of the verbal measurement at each time point. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**</font>
+<font size="4">**Assignment 27: Use processing speed as a time-varying predictor of the verbal measurement at each time point. How are the intercept and slope of the verbal measures? Does processing speed predict verbal measures the same way across time points?**</font>
 
 ```{r class.source = "fold-show", timevar, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -284,56 +331,11 @@ summary(fit_basis_growth_model_tvp, fit.measures = TRUE, rsquare = TRUE, standar
 You're ready to add a bit more complexity to those models. <a href="#top">Click here to go back to the top</a> to move on to the next module.
 
 
-### Uneven time intervals
-
-Sometimes data collection does not happen every year, the intervals between two measures might be uneven. In the wisc data it seems that they measured the children at 6, 7, 9 and 11 years old. 
-
-<font size="4">**Assignment 26: Perform the same steps as in assignments 7, 8 and 14 but take into account the uneven time intervals in your loadings. Compare the three fits of the three models. Do you have the same result as in the previous assignments?**</font>
-
-```{r class.source = "fold-show", unevenint, message=FALSE,warning=FALSE,include=TRUE}
-# Specify linear model
-linear_growth_model_uneven <- ' i =~ 1*Verbal_T6 + 1*Verbal_T7 + 1*Verbal_T9 + 1*Verbal_T11
-                                s =~ 6*Verbal_T6 + 7*Verbal_T7 + 9*Verbal_T9 + 11*Verbal_T11'
-
-# Fit LGM
-fit_linear_growth_model_uneven <- growth(linear_growth_model_uneven, data=wisc_verbal,missing='fiml')
-# Output results
-summary(fit_linear_growth_model_uneven, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
-
-# Specify quadratic model
-quad_growth_model_uneven <- ' i =~ 1*Verbal_T6 + 1*Verbal_T7 + 1*Verbal_T9 + 1*Verbal_T11
-                                s =~ 6*Verbal_T6 + 7*Verbal_T7 + 9*Verbal_T9 + 11*Verbal_T11
-                                q =~ 36*Verbal_T6 + 49*Verbal_T7 + 81*Verbal_T9 + 121*Verbal_T11'
-
-# Fit LGM
-fit_quad_growth_model_uneven <- growth(quad_growth_model_uneven, data=wisc_verbal,missing='fiml')
-# Output results
-summary(fit_quad_growth_model_uneven, fit.measures = TRUE, rsquare = TRUE, standardized = TRUE)
-
-#You should get the warning message "In lav_object_post_check(object) : lavaan WARNING: some estimated lv variances are negative" 
-
-# Compare linear model fit between the model not taking into account the uneven intervals and the one taking into account the uneven intervals
-anova(fit_linear_growth_model_uneven,fit_linear_growth_model)
-#You cannot compare these models
-
-# Compare model fit between linear trajectory with uneven intervals and the basis model
-anova(fit_linear_growth_model_uneven,fit_basis_growth_model)
-#Here it looks like the basis model is preferred. 
-
-
-```
-
-A recommendation is that, if time intervals are unequal, it may be better to use measured time.
-
-
-
-
-
 ### Intercept and slopes relations
 
 Now that you know how to estimate the trajectory of one variable you are able to estimate the trajectory of two variables and see how they interact. 
 
-<font size="4">**Assignment 27: Create two non-linear (basis) growth models, one for verbal and one for processing speed. Correlate the changes of the two metrics. Are their slopes correlated?**</font>
+<font size="4">**Assignment 28: Create two non-linear (basis) growth models, one for verbal and one for processing speed. Correlate the changes of the two metrics. Are their slopes correlated?**</font>
 
 ```{r class.source = "fold-show", twotraj, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -351,7 +353,7 @@ summary(fit_basis_growth_model_cor_ver_pro, fit.measures = TRUE, rsquare = TRUE,
 
 ```
 
-<font size="4">**Assignment 28: Within that model, explore how one metrics baseline level predicts the changes in the other. How do they predict each other?**</font>
+<font size="4">**Assignment 29: Within that model, explore how one metrics baseline level predicts the changes in the other. How do they predict each other?**</font>
 
 ```{r class.source = "fold-show", twotraj2, message=FALSE,warning=FALSE,include=TRUE}
 # Specify model
@@ -374,61 +376,61 @@ Let's finish with simulation of data. <a href="#top">Click here to go back to th
 
 
 
-### LEAP data [extra]
+<!-- ### LEAP data [extra] -->
 
-Here we will fit a LGM to synthetic LEAP data! 
+<!-- Here we will fit a LGM to synthetic LEAP data!  -->
 
-<font size="4">**Assignment 29: Load LEAP data & try to make a plot**</font>
+<!-- <font size="4">**Assignment 30: Load LEAP data & try to make a plot**</font> -->
 
-HINT: You might need the melt function from the package reshape2!
+<!-- HINT: You might need the melt function from the package reshape2! -->
 
-```{r class.source = "fold-show", leapPlt, message=FALSE,warning=FALSE,include=TRUE, eval=F}
-pacman::p_load(reshape2, ggrain)
+<!-- ```{r class.source = "fold-show", leapPlt, message=FALSE,warning=FALSE,include=TRUE, eval=F} -->
+<!-- pacman::p_load(reshape2, ggrain) -->
 
-# commenting off so it will knit
-#leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv"))
+<!-- # commenting off so it will knit -->
+<!-- #leap_synthdata <- read.csv(paste0(path,"leap_synthdata.csv")) -->
 
-# I thought this was a subject ID... it clearly is not
-leap_synthdata[leap_synthdata$subjects == 949903300427,]
+<!-- # I thought this was a subject ID... it clearly is not -->
+<!-- leap_synthdata[leap_synthdata$subjects == 949903300427,] -->
 
-# now we make the data frame long with melt on ssp
-leap_synthdata_long <- melt(leap_synthdata, id.vars = "subjects", measure.vars = colnames(leap_synthdata)[str_detect(colnames(leap_synthdata), "ssp")])
+<!-- # now we make the data frame long with melt on ssp -->
+<!-- leap_synthdata_long <- melt(leap_synthdata, id.vars = "subjects", measure.vars = colnames(leap_synthdata)[str_detect(colnames(leap_synthdata), "ssp")]) -->
 
-# plotting the data
-ggplot(leap_synthdata_long, aes(variable, value, group = subjects, color = subjects)) +
-  geom_point() +
-  geom_line() +
-  theme_classic(base_size = 15) +
-  theme(legend.position = "none") +
-  labs(x = "Wave", y = "Score on ssp")
+<!-- # plotting the data -->
+<!-- ggplot(leap_synthdata_long, aes(variable, value, group = subjects, color = subjects)) + -->
+<!--   geom_point() + -->
+<!--   geom_line() + -->
+<!--   theme_classic(base_size = 15) + -->
+<!--   theme(legend.position = "none") + -->
+<!--   labs(x = "Wave", y = "Score on ssp") -->
 
-```
+<!-- ``` -->
 
-<font size="4">**Assignment 30: Make a latent growth curve model with ssp**</font>
+<!-- <font size="4">**Assignment 31: Make a latent growth curve model with ssp**</font> -->
 
-```{r class.source = "fold-show", leap_lgc, message=FALSE,warning=FALSE,include=TRUE, eval=F}
+<!-- ```{r class.source = "fold-show", leap_lgc, message=FALSE,warning=FALSE,include=TRUE, eval=F} -->
 
-fit_lgm_ssp<- '
-i_ssp =~ 1*t1_ssp_total + 1*t2_ssp_total + 1*t3_ssp_total
-s_ssp =~ 0*t1_ssp_total + 1*t2_ssp_total + 2*t3_ssp_total
-t1_ssp_total~~ervar1*t1_ssp_total
-t2_ssp_total~~ervar2*t2_ssp_total
-t3_ssp_total~~ervar3*t3_ssp_total
-'
-fit_fit_lgm_ssp <- growth(fit_lgm_ssp, data=leap_synthdata,missing='fiml',estimator='mlr')
-# Output results
-summary(fit_fit_lgm_ssp, fit.measures=TRUE, standardized=TRUE, rsquare=TRUE,ci=T)
+<!-- fit_lgm_ssp<- ' -->
+<!-- i_ssp =~ 1*t1_ssp_total + 1*t2_ssp_total + 1*t3_ssp_total -->
+<!-- s_ssp =~ 0*t1_ssp_total + 1*t2_ssp_total + 2*t3_ssp_total -->
+<!-- t1_ssp_total~~ervar1*t1_ssp_total -->
+<!-- t2_ssp_total~~ervar2*t2_ssp_total -->
+<!-- t3_ssp_total~~ervar3*t3_ssp_total -->
+<!-- ' -->
+<!-- fit_fit_lgm_ssp <- growth(fit_lgm_ssp, data=leap_synthdata,missing='fiml',estimator='mlr') -->
+<!-- # Output results -->
+<!-- summary(fit_fit_lgm_ssp, fit.measures=TRUE, standardized=TRUE, rsquare=TRUE,ci=T) -->
 
-```
+<!-- ``` -->
 
-<font size="4">**Assignment 31: Choose a exogenous variable and see how it impacts the change of ssp!**</font>
+<!-- <font size="4">**Assignment 32: Choose a exogenous variable and see how it impacts the change of ssp!**</font> -->
 
 
 ### Simulate your data [extra]
 
 Data simulation is a useful tool to test your models and do power analysis, 
 
-<font size="4">**Assignment 32: Simulate a linear growth model with 4 waves. The intercepts should have a mean of 100 and a variance of 15. The slope should have a mean of 5 and a variance of 10. The intercept-slope covariance should have a mean of 3.**</font>
+<font size="4">**Assignment 30: Simulate a linear growth model with 4 waves. The intercepts should have a mean of 100 and a variance of 15. The slope should have a mean of 5 and a variance of 10. The intercept-slope covariance should have a mean of 3.**</font>
 
 ```{r class.source = "fold-show", simdat, message=FALSE,warning=FALSE,include=TRUE}
 # Specify linear model
@@ -483,7 +485,7 @@ parTable(fit_fit_lgm_4waves)   #Parameters are recovered nicely
 
 You might want to simulate different means for the intercepts and slopes of different groups (e.g., female and male). You can simulate those groups at the same time by using a list: c().
 
-<font size="4">**Assignment 33: Simulate a linear growth model with three groups.**</font>
+<font size="4">**Assignment 31: Simulate a linear growth model with three groups.**</font>
 
 ```{r class.source = "fold-show", simdatgroups, message=FALSE,warning=FALSE,include=TRUE}
 # Specify linear model
@@ -537,7 +539,7 @@ ggplot(plotdat, aes(variable,value,group=id)) +
 
 Simulating data can also be used for power analysis to test what effect size would be detected with your sample size and your model. 
 
-<font size="4">**Assignment 34: Use the previous simulate data model to test the effect size of a predictor on the slope.**</font>
+<font size="4">**Assignment 32: Use the previous simulate data model to test the effect size of a predictor on the slope.**</font>
 
 ```{r class.source = "fold-show", poweranalysis, message=FALSE,warning=FALSE,include=TRUE}
 
